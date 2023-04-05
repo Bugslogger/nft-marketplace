@@ -13,6 +13,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Link from "next/link";
+import { useWeb3 } from "@/components/providers";
 
 const pages = [
   { name: "Marketplace", link: "/", current: true },
@@ -22,7 +23,6 @@ const settings = [
   { name: "Profile", link: "/profile", current: true },
   { name: "Logout", link: "/", current: false },
 ];
-
 const HeaderTheme = createTheme({
   palette: {
     mode: "light",
@@ -30,6 +30,12 @@ const HeaderTheme = createTheme({
 });
 
 function Header() {
+  //debugger
+  const { hooks } = useWeb3();
+  const { data } = hooks.useAccount("this is test.");
+  //debugger
+  console.log("hooks", data);
+  //debugger 
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 

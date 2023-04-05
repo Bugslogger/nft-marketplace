@@ -1,19 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract NftMarket {
-  address public owner = msg.sender;
-  uint public last_completed_migration;
-
-  modifier restricted() {
-    require(
-      msg.sender == owner,
-      "This function is restricted to the contract's owner"
-    );
-    _;
-  }
-
-  function setCompleted(uint completed) public restricted {
-    last_completed_migration = completed;
-  }
+contract NftMarket is ERC721URIStorage {
+    constructor() ERC721("CreatureNFT", "CNFT") {}
 }
