@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { createDefaultState, createWeb3State, loadContract } from "./utiles";
 import Web3Modal from "web3modal";
 import { ethers } from "ethers";
-import { setupHooks } from "@hooks";
 
 const Web3Context = createContext(createDefaultState());
 
@@ -15,13 +14,22 @@ const Web3Provider = ({ children }) => {
         cacheProvider: false,
       });
 
-      const web3Connect = await web3modal.connect();
-      const provider = new ethers.providers.Web3Provider(web3Connect);
-      const contract = await loadContract("NftMarket", provider);
+      try {
+        const web3Connect = await web3modal.connect();
 
-      console.log("contract2: ", contract);
-      debugger;
-      setweb3api(createWeb3State(window.ethereum, provider, contract, false));
+        // console.log(web3Connect);
+        const provider = new ethers.providers.Web3Provider(web3Connect);
+
+        const contract = await loadContract("NftMarket", provider);
+
+        setweb3api(createWeb3State(window.ethereum, provider, contract, false));
+      } catch (error) {
+        console.error("Please, install web3 wallet");
+        setweb3api((api) => {
+          console.log("api: ", api);
+          createWeb3State(api.ethereum, api.provider, api.contract, false);
+        });
+      }
     };
     initWeb3();
   }, []);
@@ -33,5 +41,12 @@ const Web3Provider = ({ children }) => {
 export function useWeb3() {
   return useContext(Web3Context);
 }
+
+export const useHooks = () => {
+  const { hooks } = useWeb3();
+  // debugger;
+  console.log("hooks: ", hooks);
+  return hooks;
+};
 
 export default Web3Provider;

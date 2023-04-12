@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -7,22 +7,18 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Link from "next/link";
-import { useWeb3 } from "@/components/providers";
+import { useAccount, useNetwork } from "@hooks/web3";
+import { WalletBar } from "@ui";
 
 const pages = [
   { name: "Marketplace", link: "/", current: true },
   { name: "Create", link: "/nft/create", current: false },
 ];
-const settings = [
-  { name: "Profile", link: "/profile", current: true },
-  { name: "Logout", link: "/", current: false },
-];
+
 const HeaderTheme = createTheme({
   palette: {
     mode: "light",
@@ -31,27 +27,22 @@ const HeaderTheme = createTheme({
 
 function Header() {
   //debugger
-  const { hooks } = useWeb3();
-  const { data } = hooks.useAccount("this is test.");
+  const { account } = useAccount();
+  const { network } = useNetwork();
+  // const { data } = hooks.useAccount("this is test.");
+  console.log("Loading: ", network, account);
+
   //debugger
-  console.log("hooks", data);
-  //debugger 
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  //debugger
+  const [anchorElNav, setAnchorElNav] = useState(null);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   return (
@@ -147,38 +138,12 @@ function Header() {
                 </Link>
               ))}
             </Box>
-
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                {settings.map((setting) => (
-                  <Link key={setting.name} href={setting.link}>
-                    <MenuItem onClick={handleCloseUserMenu}>
-                      <Typography textAlign="center">{setting.name}</Typography>
-                    </MenuItem>
-                  </Link>
-                ))}
-              </Menu>
-            </Box>
+            <WalletBar
+              connect={account.connect}
+              isLoading={account.isLoading}
+              isInstalled={account.isInstalled}
+              account={account?.data}
+            />
           </Toolbar>
         </Container>
       </AppBar>

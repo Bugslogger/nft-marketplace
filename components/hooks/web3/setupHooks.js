@@ -1,7 +1,9 @@
-import { hookFactory as createAccount, useAccounts } from "./useAccounts";
+import { hookFactory as createAccount, useAccountHook } from "./useAccounts";
+import { hookFactory as createNetwork, useNetworkHook } from "./useNetwork";
 
 export const web3Hooks = {
-  useAccounts,
+  useAccounts: useAccountHook,
+  useNetwork: useNetworkHook,
 };
 
 /**
@@ -10,7 +12,9 @@ export const web3Hooks = {
  * @returns
  */
 export const setupHooks = (deps) => {
+
   return {
     useAccount: createAccount(deps),
+    useNetwork: createNetwork(deps),
   };
 };

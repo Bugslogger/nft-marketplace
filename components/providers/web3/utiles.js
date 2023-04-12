@@ -9,7 +9,7 @@ export const createDefaultState = () => {
     provider: null,
     contract: null,
     isLoading: true,
-    hooks: setupHooks({}),
+    hooks: setupHooks({ isLoading: true }),
   };
 };
 //debugger;
@@ -32,7 +32,6 @@ export const createWeb3State = (ethereum, provider, contract, isLoading) => {
     hooks: setupHooks({ ethereum, provider, contract }),
   };
 };
-//debugger;
 
 const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
 //debugger;
@@ -45,21 +44,21 @@ const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
  */
 export const loadContract = async (name, provider) => {
   //debugger;
-  console.log("contract3: ", name, provider);
+  // console.log("contract3: ", name, provider);
   //debugger;
   if (!NETWORK_ID) {
-    console.log("Network ID not defined: ", NETWORK_ID);
+    // console.log("Network ID not defined: ", NETWORK_ID);
     return Promise.reject("Network ID not defined");
   }
   //debugger;
-  console.log("contract4: ", name, provider);
+  // console.log("contract4: ", name, provider);
   //debugger;
   const res = await fetch(`/contracts/${name}.json`);
-  console.log("contract5: ", res);
+  // console.log("contract5: ", res);
   //debugger;
   const Artifact = await res.json();
-  console.log("contract6: ", Artifact);
-  console.log("contract7: ", Artifact.networks);
+  // console.log("contract6: ", Artifact);
+  // console.log("contract7: ", Artifact.networks);
   //debugger;
   if (Artifact.networks[NETWORK_ID].address) {
     const contract = new ethers.Contract(
@@ -67,7 +66,7 @@ export const loadContract = async (name, provider) => {
       Artifact.abi,
       provider
     );
-    console.log("contract8: ", contract);
+    // console.log("contract8: ", contract);
     //debugger;
     return contract;
   } else {
