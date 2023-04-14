@@ -68,7 +68,7 @@ const Index = ({ connect, isLoading, isInstalled, account }) => {
     );
   }
 
-  if (isInstalled) {
+  if (!isInstalled) {
     return (
       <Button
         onClick={() => window.open("https://metamask.io")}

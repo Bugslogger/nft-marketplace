@@ -7,13 +7,15 @@ import useSWR from "swr";
  * @returns {(String|Promise)}
  */
 export const hookFactory = (deps) => () => {
-  
   const { provider, ethereum, isLoading } = deps;
+  console.warn("a1", deps);
+
   const { data, mutate, isValidating, ...swr } = useSWR(
     provider ? "web3/useAccounts" : null,
     async () => {
       const accounts = await provider?.listAccounts();
       const account = accounts[0];
+      console.warn("a2", provider);
 
       if (!account) {
         throw "Connot retreive account! Please connect to wallet.";
@@ -23,6 +25,7 @@ export const hookFactory = (deps) => () => {
     },
     {
       revalidateOnFocus: false,
+      shouldRetryOnError: false,
     }
   );
 
@@ -56,11 +59,12 @@ export const hookFactory = (deps) => () => {
     }
   };
   return {
+    ...swr,
     data,
     mutate,
-    ...swr,
+    isValidating,
     connect,
-    isLoading: isLoading || isValidating,
+    isLoading: isLoading,
     isInstalled: ethereum?.isMetaMask || false,
   };
 };

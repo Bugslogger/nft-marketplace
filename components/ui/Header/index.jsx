@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useAccount, useNetwork } from "@hooks/web3";
 import { WalletBar } from "@ui";
 
+import Chip from "@mui/material/Chip";
+
 const pages = [
   { name: "Marketplace", link: "/", current: true },
   { name: "Create", link: "/nft/create", current: false },
@@ -26,11 +28,11 @@ const HeaderTheme = createTheme({
 });
 
 function Header() {
-  //debugger
-  const { account } = useAccount();
   const { network } = useNetwork();
+  const { account } = useAccount();
+
   // const { data } = hooks.useAccount("this is test.");
-  console.log("Loading: ", network, account);
+  console.log("Loading: ", network?.data, account);
 
   //debugger
 
@@ -138,6 +140,32 @@ function Header() {
                 </Link>
               ))}
             </Box>
+
+            <Chip
+              variant="outlined"
+              color="success"
+              label={
+                network.isLoading
+                  ? "Loading..."
+                  : account.isInstalled
+                  ? network.data
+                  : "Install Web3 Wallet"
+              }
+              sx={{ padding: "5px 10px", marginX: "10px" }}
+              avatar={
+                <Typography
+                  sx={{
+                    width: "10px !important",
+                    height: "10px !important",
+                    borderRadius: "50%",
+                    padding: "0px",
+                    background: "green",
+                  }}
+                  className=""
+                ></Typography>
+              }
+            />
+
             <WalletBar
               connect={account.connect}
               isLoading={account.isLoading}
