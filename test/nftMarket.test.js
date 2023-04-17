@@ -9,7 +9,6 @@ contract("NftMarket", (accounts) => {
 
   before(async () => {
     _contract = await NftMarket.deployed();
-    console.log(accounts);
   });
 
   describe("Mint token", () => {

@@ -14,11 +14,22 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import React from "react";
-import data from "@/components/ui/content/meta.json";
+import React, { useEffect } from "react";
+import { useOwnedNfts } from "@hooks/web3";
+// import data from "@/components/ui/content/meta.json";
 
 const Profile = () => {
   const [value, setValue] = React.useState(0);
+  const { ownedNfts } = useOwnedNfts();
+  const [singleNft, setsingleNft] = React.useState();
+
+  useEffect(() => {
+    if (ownedNfts?.data && ownedNfts?.data?.length > 0) {
+      setsingleNft(ownedNfts?.data[0]);
+      return;
+    }
+    setsingleNft();
+  }, [ownedNfts?.data]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -44,12 +55,24 @@ const Profile = () => {
               maxWidth=""
               sx={{ display: "flex", flexWrap: "wrap" }}
             >
-              {data.map((image) => (
-                <Card sx={{ maxWidth: 200, my: 4, mr: 2 }}>
+              {ownedNfts?.data?.map((image) => (
+                <Card
+                  onClick={() => setsingleNft(image)}
+                  sx={{
+                    maxWidth: 200,
+                    my: 4,
+                    mr: 2,
+                    cursor: "pointer",
+                    border:
+                      image.tokenURI === singleNft?.tokenURI
+                        ? "4px solid purple"
+                        : "4px solid transparent",
+                  }}
+                >
                   <CardMedia
                     sx={{ height: 200, width: 200 }}
-                    image={image.image}
-                    title="my-NFT"
+                    image={image.meta.image}
+                    title={image.meta.name}
                   />
                 </Card>
               ))}
@@ -57,83 +80,79 @@ const Profile = () => {
           </Container>
         </Grid>
         <Grid container xs={4}>
-          <Container>
-            <Card
-              sx={{
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "flex-start",
-              }}
-            >
-              <Box mx={"auto"}>
-                <CardMedia
-                  sx={{ height: 350, width: 350, mt: 3, borderRadius: 2 }}
-                  image="https://eincode.mypinata.cloud/ipfs/QmaQYCrX9Fg2kGijqapTYgpMXV7QPPzMwGrSRfV9TvTsfM/Creature_1.png"
-                />
-              </Box>
-              <CardContent>
-                <Typography
-                  sx={{ fontWeight: "600" }}
-                  gutterBottom
-                  variant="h5"
-                  component="div"
-                >
-                  Eincode Creature #1
-                </Typography>
-                <Typography
-                  variant="body1"
-                  fontWeight={"bold"}
-                  color="text.secondary"
-                >
-                  Fierce violet creature. Very durable and tanky.
-                </Typography>
-                <List sx={{ mt: 2 }}>
+          {singleNft && (
+            <Container>
+              <Card
+                sx={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Box mx={"auto"}>
+                  <CardMedia
+                    sx={{ height: 350, width: 350, mt: 2, borderRadius: 2 }}
+                    image={singleNft?.meta?.image}
+                  />
+                </Box>
+                <CardContent>
                   <Typography
-                    variant="h6"
-                    component={"div"}
-                    fontWeight={600}
-                    borderBottom={1}
-                    borderColor={"dimgray"}
-                    py={1}
+                    sx={{ fontWeight: "600" }}
+                    gutterBottom
+                    variant="h5"
+                    component="div"
                   >
-                    Information
+                    {singleNft?.meta?.name}
                   </Typography>
-                  <ListItem
-                    sx={{ borderBottom: "1px solid grey" }}
-                    secondaryAction="100"
+                  <Typography
+                    variant="body1"
+                    fontWeight={"bold"}
+                    color="text.secondary"
                   >
-                    <ListItemText>Health</ListItemText>
-                  </ListItem>
-                  <ListItem
-                    secondaryAction="100"
-                    sx={{ borderBottom: "1px solid grey" }}
-                  >
-                    <ListItemText>Attack</ListItemText>
-                  </ListItem>
-                  <ListItem
-                    sx={{ borderBottom: "1px solid grey" }}
-                    secondaryAction="100"
-                  >
-                    <ListItemText>Speed</ListItemText>
-                  </ListItem>
-                </List>
-                <Grid container sx={{ pt: 2 }}>
-                  <Grid xs={5} mx={"auto"}>
-                    <Button variant="contained" fullWidth sx={{ px: 4 }}>
-                      Download
-                    </Button>
+                    {singleNft?.meta?.description}
+                  </Typography>
+                  <List sx={{ mt: 2 }}>
+                    <Typography
+                      variant="h6"
+                      component={"div"}
+                      fontWeight={600}
+                      borderBottom={1}
+                      borderColor={"dimgray"}
+                      py={1}
+                    >
+                      Information
+                    </Typography>
+                    {singleNft?.meta?.attributes.map((value, index) => {
+                      // console.log(singleNft);
+                      return (
+                        <ListItem
+                          key={index}
+                          sx={{ borderBottom: "1px solid grey" }}
+                          secondaryAction={value?.value}
+                        >
+                          <ListItemText>{value?.trait_type}</ListItemText>
+                        </ListItem>
+                      );
+                    })}
+                  </List>
+                  <Grid container sx={{ pt: 2 }}>
+                    <Grid xs={5} mx={"auto"}>
+                      <Button variant="contained" fullWidth sx={{ px: 4 }}>
+                        Download
+                      </Button>
+                    </Grid>
+                    <Grid xs={5} mx={"auto"}>
+                      <Button variant="outlined" fullWidth sx={{ px: 4 }}>
+                        Tranfer
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid xs={5} mx={"auto"}>
-                    <Button variant="outlined" fullWidth sx={{ px: 4 }}>
-                      Tranfer
-                    </Button>
-                  </Grid>
-                </Grid>
-              </CardContent>
-            </Card>
-          </Container>
+                </CardContent>
+              </Card>
+            </Container>
+          )}
         </Grid>
       </Grid>
     </BaseLayout>

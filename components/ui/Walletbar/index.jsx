@@ -11,7 +11,6 @@ import React from "react";
 
 const settings = [
   { name: "Profile", link: "/profile", current: true },
-  { name: "Logout", link: "/", current: false },
 ];
 
 const Index = ({ connect, isLoading, isInstalled, account }) => {

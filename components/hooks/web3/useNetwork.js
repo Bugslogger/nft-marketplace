@@ -49,4 +49,3 @@ export const hookFactory = (deps) => () => {
  * @param {any} param
  */
 export const useNetworkHook = hookFactory({ ethereum: null, provider: null });
-console.warn("n3", useNetworkHook);

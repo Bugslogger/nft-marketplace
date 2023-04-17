@@ -20,14 +20,18 @@ const Web3Provider = ({ children }) => {
 
         // console.log(web3Connect);
         const provider = new ethers.providers.Web3Provider(web3Connect);
-
         const contract = await loadContract("NftMarket", provider);
+
+        const signer = provider.getSigner();
+        const signedContract = contract.connect(signer);
+        
         setGlobalListneres(window.ethereum);
-        setweb3api(createWeb3State(window.ethereum, provider, contract, false));
+        setweb3api(
+          createWeb3State(window.ethereum, provider, signedContract, false)
+        );
       } catch (error) {
         console.error("Please, install web3 wallet");
         setweb3api((api) => {
-          console.log("api: ", api);
           createWeb3State(api.ethereum, api.provider, api.contract, false);
         });
       }

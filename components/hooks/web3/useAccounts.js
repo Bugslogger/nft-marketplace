@@ -8,14 +8,12 @@ import useSWR from "swr";
  */
 export const hookFactory = (deps) => () => {
   const { provider, ethereum, isLoading } = deps;
-  console.warn("a1", deps);
 
   const { data, mutate, isValidating, ...swr } = useSWR(
     provider ? "web3/useAccounts" : null,
     async () => {
       const accounts = await provider?.listAccounts();
       const account = accounts[0];
-      console.warn("a2", provider);
 
       if (!account) {
         throw "Connot retreive account! Please connect to wallet.";

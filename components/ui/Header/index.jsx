@@ -31,8 +31,8 @@ function Header() {
   const { network } = useNetwork();
   const { account } = useAccount();
 
-  // const { data } = hooks.useAccount("this is test.");
-  console.log("Loading: ", network?.data, account);
+  // // const { data } = hooks.useAccount("this is test.");
+  // console.log("Loading: ", network?.data, account);
 
   //debugger
 
