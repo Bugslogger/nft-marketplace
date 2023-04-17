@@ -26,6 +26,7 @@ const Profile = () => {
   useEffect(() => {
     if (ownedNfts?.data && ownedNfts?.data?.length > 0) {
       setsingleNft(ownedNfts?.data[0]);
+      console.log(ownedNfts);
       return;
     }
     setsingleNft();
@@ -144,8 +145,19 @@ const Profile = () => {
                       </Button>
                     </Grid>
                     <Grid xs={5} mx={"auto"}>
-                      <Button variant="outlined" fullWidth sx={{ px: 4 }}>
-                        Tranfer
+                      <Button
+                        disabled={singleNft.isListed}
+                        variant="outlined"
+                        onClick={() =>
+                          ownedNfts?.ListNft(
+                            singleNft.tokenURI,
+                            singleNft.price
+                          )
+                        }
+                        fullWidth
+                        sx={{ px: 4 }}
+                      >
+                        {singleNft.isListed ? "Listed" : "List Nft"}
                       </Button>
                     </Grid>
                   </Grid>

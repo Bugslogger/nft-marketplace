@@ -68,7 +68,7 @@ export default function NftItem({ data, buyNft }) {
         </CardActions>
         <Box mt={3}>
           <Button
-            onClick={() => buyNft(data.tokenId, data.price)}
+            onClick={() => buyNft(data.tokenURI, data.price)}
             variant="contained"
             sx={{ marginRight: 2, textTransform: "capitalize" }}
             size="medium"

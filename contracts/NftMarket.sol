@@ -171,7 +171,7 @@ contract NftMarket is ERC721URIStorage, Ownable {
         emit NftItemCreated(tokenId, price, msg.sender, true);
     }
 
-    function _beforeTokenTransfer(
+     function _beforeTokenTransfer(
         address from,
         address to,
         uint tokenId,
@@ -181,7 +181,7 @@ contract NftMarket is ERC721URIStorage, Ownable {
 
         // minting token
         if (from == address(0)) {
-            _addTokenToAllTokensEnumaration(tokenId);
+            _addTokenToAllTokensEnumeration(tokenId);
         } else if (from != to) {
             _removeTokenFromOwnerEnumeration(from, tokenId);
         }
@@ -189,16 +189,16 @@ contract NftMarket is ERC721URIStorage, Ownable {
         if (to == address(0)) {
             _removeTokenFromAllTokensEnumeration(tokenId);
         } else if (to != from) {
-            _addTokenToOwnerEnumaration(to, tokenId);
+            _addTokenToOwnerEnumeration(to, tokenId);
         }
     }
 
-    function _addTokenToAllTokensEnumaration(uint tokenId) private {
+    function _addTokenToAllTokensEnumeration(uint tokenId) private {
         _idToNftIndex[tokenId] = _allNfts.length;
         _allNfts.push(tokenId);
     }
 
-    function _addTokenToOwnerEnumaration(address to, uint tokenId) private {
+    function _addTokenToOwnerEnumeration(address to, uint tokenId) private {
         uint length = ERC721.balanceOf(to);
         _ownedTokens[to][length] = tokenId;
         _idToOwnedIndex[tokenId] = length;
