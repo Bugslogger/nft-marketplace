@@ -13,14 +13,54 @@ import {
 import Textarea from "@mui/joy/Textarea";
 import React, { useState } from "react";
 import { Box } from "@mui/joy";
+import axios from "axios";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const create = () => {
   const [toggle, settoggle] = useState(false);
+  const [nftMeta, setnftMeta] = useState({
+    name: "",
+    description: "",
+    image: "",
+    attributes: [
+      { trait_type: "attack", value: "0" },
+      { trait_type: "health", value: "0" },
+      { trait_type: "speed", value: "0" },
+    ],
+  });
 
   const ChangeForm = () => {
     settoggle(!toggle);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setnftMeta({ ...nftMeta, [name]: value });
+  };
+
+  const CreateNft = async () => {
+    try {
+      const messageToSign = await axios.get("/api/verify");
+      console.log(messageToSign);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleAttributeChange = (e) => {
+    const { name, value } = e.target;
+
+    const attributeIdx = nftMeta.attributes.findIndex(
+      (attr) => attr.trait_type === name
+    );
+
+    nftMeta.attributes[attributeIdx].value = value;
+
+    setnftMeta({
+      ...nftMeta,
+      attributes: nftMeta.attributes,
+    });
   };
 
   return (
@@ -81,12 +121,18 @@ const create = () => {
                     sx={{ my: 1 }}
                     id="outlined-basic"
                     label="NFT Name"
+                    name="name"
+                    value={nftMeta.name}
+                    onChange={handleChange}
                     variant="outlined"
                   />
                   <Typography>Description</Typography>
                   <Textarea
                     disabled={false}
+                    onChange={handleChange}
                     sx={{ my: 1 }}
+                    value={nftMeta.description}
+                    name="description"
                     minRows={4}
                     placeholder="Some NFT description"
                     size="md"
@@ -96,8 +142,11 @@ const create = () => {
                   <Typography sx={{ mt: 2, mb: 1 }}>Cover Photo</Typography>
                   <TextField
                     fullWidth
+                    onChange={handleChange}
+                    value={nftMeta.image}
                     id="outlined-basic"
                     label="NFT Name"
+                    name="image"
                     variant="outlined"
                   />
                   <Grid
@@ -106,7 +155,7 @@ const create = () => {
                     direction={"row"}
                     sx={{ flexGrow: 1, my: 1 }}
                   >
-                    <Grid xs={3} sx={{ mt: 1 }}>
+                    {/* <Grid xs={3} sx={{ mt: 1 }}>
                       <Typography>Health</Typography>
                       <TextField
                         fullWidth
@@ -135,7 +184,25 @@ const create = () => {
                         label="Speed"
                         variant="outlined"
                       />
-                    </Grid>
+                    </Grid> */}
+                    {nftMeta.attributes.map((value) => {
+                      return (
+                        <Grid xs={3} marginX={1} sx={{ mt: 1 }}>
+                          <Typography sx={{ textTransform: "capitalize" }}>
+                            {value.trait_type}
+                          </Typography>
+                          <TextField
+                            fullWidth
+                            onChange={handleAttributeChange}
+                            sx={{ my: 1 }}
+                            id="outlined-basic"
+                            name={value.trait_type}
+                            label={value.trait_type}
+                            variant="outlined"
+                          />
+                        </Grid>
+                      );
+                    })}
                     <Typography
                       fontWeight={600}
                       fontSize={14}
@@ -170,6 +237,7 @@ const create = () => {
                 <Button
                   variant="contained"
                   size="medium"
+                  onClick={CreateNft}
                   sx={{ textTransform: "capitalize" }}
                 >
                   Save
