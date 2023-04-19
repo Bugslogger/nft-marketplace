@@ -21,6 +21,7 @@
     "dotenv": "^16.0.3",
     "eslint": "8.37.0",
     "eslint-config-next": "13.2.4",
+    "ethereumjs-util": "^7.1.5",
     "ethers": "^5.4.0",
     "iron-session": "^6.3.1",
     "next": "13.2.4",

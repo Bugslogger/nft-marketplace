@@ -9,15 +9,20 @@ import {
   TextField,
   Button,
   Typography,
+  Avatar,
 } from "@mui/material";
 import Textarea from "@mui/joy/Textarea";
 import React, { useState } from "react";
 import { Box } from "@mui/joy";
 import axios from "axios";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import Image from "next/image";
+import { useWeb3 } from "@provider";
 
 const label = { inputProps: { "aria-label": "Switch demo" } };
 
 const create = () => {
+  const { ethereum } = useWeb3();
   const [toggle, settoggle] = useState(false);
   const [nftMeta, setnftMeta] = useState({
     name: "",
@@ -42,7 +47,28 @@ const create = () => {
   const CreateNft = async () => {
     try {
       const messageToSign = await axios.get("/api/verify");
-      console.log(messageToSign);
+      const accounts = await ethereum?.request({
+        method: "eth_requestAccounts",
+      });
+
+      const account = accounts[0];
+
+      const signedData = await ethereum?.request({
+        method: "personal_sign",
+        params: [
+          JSON.stringify(messageToSign.data),
+          account,
+          messageToSign.data.id,
+        ],
+      });
+
+      await axios.post("/api/verify", {
+        address: account,
+        signature: signedData,
+        nft: nftMeta,
+      });
+
+      console.log(signedData);
     } catch (error) {
       console.log(error);
     }
@@ -140,15 +166,71 @@ const create = () => {
                   />
                   <Typography>Brief description of NFT</Typography>
                   <Typography sx={{ mt: 2, mb: 1 }}>Cover Photo</Typography>
-                  <TextField
-                    fullWidth
-                    onChange={handleChange}
-                    value={nftMeta.image}
-                    id="outlined-basic"
-                    label="NFT Name"
-                    name="image"
-                    variant="outlined"
-                  />
+                  {true ? (
+                    <Box
+                      fullWidth
+                      height={200}
+                      border={"1px dashed rgba(80,80,80,0.3)"}
+                      borderRadius={8}
+                      onClick={() =>
+                        document.getElementById("uploadImage").click()
+                      }
+                      value={nftMeta.image}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        alignItems: "center",
+                        flexDirection: "column",
+                      }}
+                      id="outlined-basic"
+                      label="NFT Name"
+                      name="image"
+                      variant="outlined"
+                    >
+                      <AddPhotoAlternateIcon
+                        color="disabled"
+                        sx={{ fontSize: "40px" }}
+                      />
+                      <Typography color={"rgba(80,80,80,0.5)"}>
+                        Upload Nft Image
+                      </Typography>
+                      <input
+                        id="uploadImage"
+                        hidden
+                        accept="image/*"
+                        multiple
+                        type="file"
+                      />
+                    </Box>
+                  ) : (
+                    <Box
+                      fullWidth
+                      height={200}
+                      my={4}
+                      borderRadius={8}
+                      // onChange={handleChange}
+                      value={nftMeta.image}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "start",
+                        alignItems: "center",
+                        flexDirection: "row",
+                      }}
+                      id="outlined-basic"
+                      label="NFT Name"
+                      name="image"
+                      variant="outlined"
+                    >
+                      <Image
+                        style={{ borderRadius: "4px" }}
+                        width={200}
+                        height={200}
+                        alt="Creature_1.png"
+                        src="/Creature_1.png"
+                      />
+                    </Box>
+                  )}
                   <Grid
                     spacing={0}
                     container
@@ -240,7 +322,7 @@ const create = () => {
                   onClick={CreateNft}
                   sx={{ textTransform: "capitalize" }}
                 >
-                  Save
+                  List
                 </Button>
               </CardContent>
             </Card>
